@@ -18,22 +18,33 @@ function getComputerMove() {
 
 function decideWinner(playerMove, computerMove) {
     if (playerMove === computerMove) return "Tie";
+
     if ((playerMove === "Rock" && computerMove === "Scissors") ||
         (playerMove === "Paper" && computerMove === "Rock") ||
-        (playerMove === "Scissors" && computerMove === "Paper")) return "Win";
+        (playerMove === "Scissors" && computerMove === "Paper")) {
+        return "Win";
+    }
     return "Lose";
 }
 
 function playGame(playerMove) {
     const computerMove = getComputerMove();
     const outcome = decideWinner(playerMove, computerMove);
+
     if (outcome === "Win") playerScore++;
     else if (outcome === "Lose") computerScore++;
+
     if (playerScore > highScore) highScore = playerScore;
 
-    const match = { playerMove: playerMove, computerMove: computerMove, outcome: outcome,
-        playerScore: playerScore, computerScore: computerScore };
-    gameHistory.unshift(match);
+    const match = {
+        playerMove: playerMove,
+        computerMove: computerMove,
+        outcome: outcome,
+        playerScore: playerScore,
+        computerScore: computerScore
+    };
+
+    gameHistory.unshift(match); 
     updateScores();
     showResult(match);
     showHistory();
@@ -47,8 +58,10 @@ function updateScores() {
 
 function showResult(match) {
     resultElement.className = "result " + match.outcome.toLowerCase();
+
     let heading = "It's a tie!";
     let detail = "Both of you chose " + match.playerMove + ".";
+
     if (match.outcome === "Win") {
         heading = "You win! 🎉";
         detail = match.playerMove + " beats " + match.computerMove + ".";
@@ -56,23 +69,38 @@ function showResult(match) {
         heading = "You lost this round";
         detail = match.computerMove + " beats " + match.playerMove + ".";
     }
-    resultElement.innerHTML = "<h3>" + heading + "</h3><p>You chose " + match.playerMove +
-        " · Computer chose " + match.computerMove + "</p><p>" + detail + "</p>";
+
+    resultElement.innerHTML =
+        "<h3>" + heading + "</h3>" +
+        "<p>You chose " + match.playerMove + " · Computer chose " + match.computerMove + "</p>" +
+        "<p>" + detail + "</p>";
 }
 
 function showHistory() {
     historyList.innerHTML = "";
     emptyMessage.style.display = gameHistory.length === 0 ? "block" : "none";
+
     for (let i = 0; i < gameHistory.length; i++) {
         const match = gameHistory[i];
         const item = document.createElement("li");
+
         let outcomeClass = "outcome-tie";
         let outcomeText = "Tie";
-        if (match.outcome === "Win") { outcomeClass = "outcome-win"; outcomeText = "You won"; }
-        else if (match.outcome === "Lose") { outcomeClass = "outcome-lose"; outcomeText = "You lost"; }
-        item.innerHTML = "<span><strong>You: " + match.playerMove + "</strong><br>Computer: " +
-            match.computerMove + "<br>Score: " + match.playerScore + "–" + match.computerScore +
-            "</span><span class='" + outcomeClass + "'>" + outcomeText + "</span>";
+
+        if (match.outcome === "Win") {
+            outcomeClass = "outcome-win";
+            outcomeText = "You won";
+        } else if (match.outcome === "Lose") {
+            outcomeClass = "outcome-lose";
+            outcomeText = "You lost";
+        }
+
+        item.innerHTML =
+            "<span><strong>You: " + match.playerMove + "</strong><br>" +
+            "Computer: " + match.computerMove + "<br>" +
+            "Score: " + match.playerScore + "–" + match.computerScore + "</span>" +
+            "<span class='" + outcomeClass + "'>" + outcomeText + "</span>";
+
         historyList.appendChild(item);
     }
 }
@@ -97,5 +125,6 @@ for (let i = 0; i < choiceButtons.length; i++) {
         playGame(this.dataset.move);
     });
 }
+
 document.getElementById("clear-history").addEventListener("click", clearHistory);
 document.getElementById("reset").addEventListener("click", resetScores);
